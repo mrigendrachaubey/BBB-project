@@ -1,0 +1,15 @@
+http://www.twam.info/hardware/beaglebone-black/u-boot-on-beaglebone-black
+use this site to get uboot and build MLO and uboot.img
+
+http://embedjournal.com/kernel-compilation-beaglebone-black/
+
+use this site to build kernel 
+we have to first 
+
+load MLO (it will be always be in first sector if copied first)
+uboot.img
+uImage(kernel initialisation)
+am335x-boneblack.dtb(device tree for kernel)
+use this particular uEnv.txt
+
+

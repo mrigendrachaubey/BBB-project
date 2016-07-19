@@ -1,0 +1,53 @@
+cross compiler:
+gcc-linaro-arm-linux-gnueabihf-4.8-2014.04_linux.tar.xz
+from 
+https://releases.linaro.org/14.04/components/toolchain/binaries/
+
+extract and export path somewhere
+export PATH=$PATH:PATH-TO-CROSS-COMPILER-arm-linux-gnueabihf
+
+Cloning uboot-
+===============
+wget http://dev.gentoo.org/~armin76/arm/beaglebone/mkcard.sh
+chmod +x mkcard.sh
+sudo ./mkcard.sh /dev/sdb
+
+git clone git://git.denx.de/u-boot.git && cd u-boot
+make am335x_boneblack_defconfig
+ARCH=arm CROSS_COMPILE=arm-linux-gnueabi- make
+
+copy MLO first
+then uboot.img
+
+
+Cloning the Kernel-
+===================
+git clone https://github.com/beagleboard/linux.git
+
+
+
+Compiling kernel-
+------------------
+sudo make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- bb.org_defconfig
+sudo make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- uImage dtbs LOADADDR=0x80008000 -j4
+
+compile kernel modules(need to check)-
+--------------------------------------
+sudo make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- -j4 modules
+$ sudo make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- INSTALL_MOD_PATH=/media/mani/RFS/ modules_install
+
+uEnv.txt-
+==========
+console=ttyS0,115200n8
+netargs=setenv bootargs console=ttyO0,115200n8 root=/dev/mmcblk0p2 ro rootfstype=ext4 rootwait debug earlyprintk mem=256M
+netboot=echo Booting from Network ...; setenv autoload no ; load mmc 0:1 ${loadaddr} uImage ; load mmc 0:1 ${fdtaddr} am335x-boneblack.dtb ; run netargs ; bootm ${loadaddr} - ${fdtaddr}
+uenvcmd=run netboot
+
+
+Last-
+=======
+from Uboot copy MLO , uboot.img, from kernel, copy uImage and dtb/am335x-boneblack.dtb
+to boot partition
+copy rootfs to rootfs partition
+
+boot using 
